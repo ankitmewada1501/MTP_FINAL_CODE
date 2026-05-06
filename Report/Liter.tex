@@ -1,0 +1,245 @@
+%=========================================
+% Section: Literature Survey
+% All citations linked to references.bib
+%=========================================
+
+\section{Literature Survey}
+
+This section reviews influential studies relevant to electric vehicle charging
+station (EVCS) planning, multi-objective evolutionary algorithms, queueing-based
+service modelling, stochastic demand forecasting, and comparative algorithm
+evaluation, arranged in reverse chronological order.
+
+\begin{enumerate}
+
+% -------------------------------------------------------------------------
+\item \textbf{Palka et al.\ \cite{palka_planning_2025}} develop an integrated
+EVCS scheduling and planning system combining machine learning demand prediction
+with Mixed-Integer Linear Programming (MILP) for station sizing and placement.
+Their hybrid AI--optimisation framework reduces planning cost by $\sim$12\%
+over purely heuristic approaches. The formulation remains single-period and
+single-objective, motivating the evolutionary four-objective framework of this
+thesis.
+
+% -------------------------------------------------------------------------
+\item \textbf{Wang et al.\ \cite{wang_deadline_2025}} propose an online
+deadline-aware EV charging model accounting for state-of-charge (SoC) dependent
+peak charging rates, showing that ignoring SoC dynamics underestimates peak grid
+load by up to 18\% under fluctuating demand. Their load-stability analysis
+reinforces the need for finite-buffer M/M/$c$/K constraints across Time-of-Use
+periods adopted in this thesis.
+
+% -------------------------------------------------------------------------
+\item \textbf{Zhao et al.\ \cite{zhao_optimal_2023}} propose a bi-level EVCS
+location model for self-charging and valet-charging user modes. Their
+Monte~Carlo demand integration shows ignoring uncertainty yields over-optimistic
+coverage estimates, directly informing the 100-scenario stochastic simulation
+module used here. Pricing, grid capacity, and queueing constraints are absent.
+
+% -------------------------------------------------------------------------
+\item \textbf{Li et al.\ \cite{li_joint_2022}} jointly optimise charging
+station placement and pricing under stochastic arrivals via chance-constrained
+programming, highlighting pricing as an integrated objective. This motivates
+replacing raw profit with net ROI (annual profit / CAPEX) to avoid Pareto
+front degeneracy caused by near-perfect linear correlation with coverage.
+
+% -------------------------------------------------------------------------
+\item \textbf{Xia et al.\ \cite{xia_grid_2022}} show that ignoring power
+network constraints in EVCS placement yields infeasible solutions at high EV
+penetration, and penalise solutions exceeding zone-level substation capacity.
+This per-zone grid capacity constraint is adopted explicitly in the problem
+formulation of this thesis.
+
+% -------------------------------------------------------------------------
+\item \textbf{Kulkarni et al.\ \cite{kulkarni_bass_2021}} apply the
+generalised Bass logistic diffusion model to forecast EV adoption in India,
+estimating an inflection point near 2030 consistent with NITI~Aayog targets.
+Their parameterisation ($t_0 = 2030$, $a = 0.3$) is adopted in the logistic
+adoption curve and validated against ward-level demand projections from
+Census~2011 data.
+
+% -------------------------------------------------------------------------
+\item \textbf{Paul and Bhattacharya \cite{paul_nsga2_2021}} study
+multi-objective EVCS siting for Kolkata using NSGA-II with cost and coverage
+objectives, confirming evolutionary superiority over classical programming for
+large-scale Indian city instances. The work is restricted to two objectives
+with no queueing, ROI, or stochastic demand --- gaps directly addressed here.
+
+% -------------------------------------------------------------------------
+\item \textbf{Bernardo et al.\ \cite{bernardo_density_2021}} demonstrate that
+urban density significantly affects appropriate service radius: dense centres
+require $\sim$1--2~km versus $\sim$3--5~km in suburban areas. This informs the
+zone-adjusted radii of 1.5~km (Central Core) and 2.5~km (Outer zones) adopted
+following MoRTH guidelines.
+
+% -------------------------------------------------------------------------
+\item \textbf{Zhang et al.\ \cite{zhang_mmck_2019}} show that ignoring finite
+system capacity underestimates blocking probability by 15--20\% at high
+utilisation, justifying the M/M/$c$/K model with $K = c + W$ waiting bays over
+the simpler Erlang-B loss model. Their capacity planning framework forms the
+analytical basis of the queueing evaluation layer in this thesis.
+
+% -------------------------------------------------------------------------
+\item \textbf{Tan et al.\ \cite{tan_tou_2016}} introduce a three-period
+Time-of-Use (ToU) arrival rate model --- Peak, Normal, and Idle --- accurately
+capturing the bimodal daily demand pattern in EV charging field data. This
+thesis extends their framework by embedding ToU-weighted M/M/$c$/K evaluation
+directly inside the evolutionary loop rather than as post-hoc analysis.
+
+% -------------------------------------------------------------------------
+\item \textbf{Sadeghi-Barzani et al.\ \cite{sadeghi_fast_2014}} optimise
+placement and sizing of fast charging stations by minimising installation cost
+and power loss under grid-side constraints. The work is single-objective and
+ignores user accessibility, queue performance, and financial viability ---
+limitations that motivate the multi-objective formulation herein.
+
+% -------------------------------------------------------------------------
+\item \textbf{Reyes-Sierra and Coello~Coello \cite{reyes_sierra_2006}} survey
+NSGA-II versus MOPSO across multiple problem domains, finding MOPSO converges
+faster early but sacrifices spread diversity, while NSGA-II maintains a
+better-distributed Pareto front. Their theoretical prediction is verified in
+this thesis through formal HV, GD, and Spread evaluation on the binary EVCS
+placement instance.
+
+% -------------------------------------------------------------------------
+\item \textbf{Coello~Coello and Lechuga \cite{coello_mopso_2002}} propose
+MOPSO, extending Particle Swarm Optimisation to multiple objectives via an
+external non-dominated archive and crowding-based leader selection. Its
+weakness on binary combinatorial problems --- where continuous velocity must
+be binarised via sigmoid threshold --- is examined in the results chapter.
+
+% -------------------------------------------------------------------------
+\item \textbf{Deb et al.\ \cite{deb_nsga2_2002}} introduce NSGA-II with fast
+non-dominated sorting ($\mathcal{O}(MN^2)$) and crowding distance diversity
+preservation. Its elitism, convergence guarantees, and compatibility with
+binary decision variables make it the primary optimiser in this thesis.
+Queueing and pricing constraints are not natively incorporated within the
+evaluation loop.
+
+\end{enumerate}
+
+%------------------------------------------------------------------
+\section{Research Gaps}
+\label{sec:lit_gaps}
+
+The review of~\cite{palka_planning_2025,wang_deadline_2025,zhao_optimal_2023,
+li_joint_2022,xia_grid_2022,kulkarni_bass_2021,paul_nsga2_2021,
+bernardo_density_2021,zhang_mmck_2019,tan_tou_2016,sadeghi_fast_2014,
+reyes_sierra_2006,coello_mopso_2002,deb_nsga2_2002} reveals five
+methodological gaps that collectively motivate the proposed framework:
+
+\begin{enumerate}
+  \item \textbf{Indian city focus with real ward-level data.} Most
+        multi-objective EVCS studies~\cite{zhao_optimal_2023,li_joint_2022,
+        xia_grid_2022} use Chinese or European city models. Studies for
+        Tier-1 Indian cities with actual ward-level demographic data and
+        India-specific policy parameters are scarce; \citet{paul_nsga2_2021}
+        is a partial exception but is restricted to two objectives.
+
+  \item \textbf{Integrated four-objective formulation.} Existing studies
+        address two~\cite{paul_nsga2_2021} or three~\cite{zhao_optimal_2023}
+        objectives. The simultaneous optimisation of capital expenditure,
+        spatial coverage, net ROI, and queue waiting time in a single Pareto
+        framework has not been reported for Indian cities.
+
+  \item \textbf{M/M/$c$/K with ToU pricing embedded in the optimization loop.}
+        Prior work either uses over-simplified Erlang-B models or applies
+        time-averaged M/M/$c$ queues post-hoc~\cite{tan_tou_2016}. An
+        M/M/$c$/K model~\cite{zhang_mmck_2019} with ToU demand periods and a
+        hard blocking probability constraint ($P_{\text{block}} \leq 10\%$)
+        embedded directly inside the evolutionary evaluation represents a
+        methodological advance.
+
+  \item \textbf{NSGA-II vs.\ MOPSO formal comparison on binary placement
+        problems.} While comparative surveys exist~\cite{reyes_sierra_2006},
+        formal empirical comparison of NSGA-II~\cite{deb_nsga2_2002} and
+        MOPSO~\cite{coello_mopso_2002} using HV, GD, and Spread on a binary
+        EVCS placement instance with queueing constraints has not been
+        reported.
+
+  \item \textbf{Net ROI as an independent objective.} As highlighted by
+        \citet{li_joint_2022}, using raw profit creates near-perfect linear
+        correlation with coverage ($r > 0.99$), yielding a degenerate Pareto
+        front. Replacing it with net ROI (annual profit / CAPEX) creates
+        genuine trade-off diversity in the multi-objective search space.
+\end{enumerate}
+
+%------------------------------------------------------------------
+\section{Comparative Summary of Key Literature}
+
+Table~\ref{tab:lit_survey} provides a structured comparison of all fourteen
+reviewed studies across methodology and key contributions.
+
+\begin{table}[htbp]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|c|p{9em}|p{10em}|p{17em}|}
+\hline
+\textbf{No.} & \textbf{Study} & \textbf{Method / Model} &
+\textbf{Key Contribution / Limitation} \\
+\hline
+1  & \cite{palka_planning_2025}
+   & ML + MILP hybrid
+   & Cost-efficient scheduling; single-period, single-objective. \\
+\hline
+2  & \cite{wang_deadline_2025}
+   & Online SoC-aware model
+   & Grid-stability under fluctuating load; no spatial siting or Pareto
+     optimisation. \\
+\hline
+3  & \cite{zhao_optimal_2023}
+   & Bi-level + Monte~Carlo
+   & Robust demand modelling; no pricing or queueing. \\
+\hline
+4  & \cite{li_joint_2022}
+   & Joint placement + pricing
+   & Stochastic pricing; no evolutionary multi-objective. \\
+\hline
+5  & \cite{xia_grid_2022}
+   & Grid-constrained placement
+   & Power-feasible siting; single-objective. \\
+\hline
+6  & \cite{kulkarni_bass_2021}
+   & Bass logistic adoption, India
+   & India-calibrated $t_0=2030$; no spatial model. \\
+\hline
+7  & \cite{paul_nsga2_2021}
+   & NSGA-II, Indian city
+   & Two-objective only; no queueing or ROI. \\
+\hline
+8  & \cite{bernardo_density_2021}
+   & Density-based radius model
+   & Zone-adjusted radii; no optimization framework. \\
+\hline
+9  & \cite{zhang_mmck_2019}
+   & M/M/$c$/K capacity planning
+   & Finite-buffer blocking; no spatial siting. \\
+\hline
+10 & \cite{tan_tou_2016}
+   & ToU queueing model
+   & Time-of-use arrivals; not embedded in optimization. \\
+\hline
+11 & \cite{sadeghi_fast_2014}
+   & Fast-charging siting + grid
+   & Grid-aware siting; single-objective only. \\
+\hline
+12 & \cite{reyes_sierra_2006}
+   & NSGA-II vs.\ MOPSO survey
+   & NSGA-II superior spread; no placement application. \\
+\hline
+13 & \cite{coello_mopso_2002}
+   & MOPSO
+   & Fast convergence; weaker spread on binary problems. \\
+\hline
+14 & \cite{deb_nsga2_2002}
+   & NSGA-II
+   & Benchmark MOEA; no queueing or pricing integration. \\
+\hline
+\end{tabular}
+\caption{Comparative summary of key studies arranged by year (latest first) on
+EVCS siting, queueing, multi-objective optimization, and demand forecasting.
+Full bibliographic details in the reference list.}
+\label{tab:lit_survey}
+\end{table}

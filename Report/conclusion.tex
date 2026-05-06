@@ -1,0 +1,96 @@
+\section{Conclusion}
+
+This thesis has presented a comprehensive four-objective optimization framework
+for the strategic deployment of Electric Vehicle Charging Stations across the
+85~administrative wards of Indore, Madhya Pradesh. The framework unifies
+logistic EV adoption forecasting, 100-scenario Monte~Carlo stochastic demand
+simulation, M/M/$c$/K finite-capacity queueing analysis with Time-of-Use
+demand segmentation, and two state-of-the-art multi-objective evolutionary
+algorithms --- NSGA-II and MOPSO --- into a single, deployment-ready
+computational pipeline.
+
+The four-objective formulation --- minimizing total capital expenditure and
+mean queue waiting time while maximizing spatial demand coverage and net
+return on investment --- successfully captures the conflicting trade-offs
+inherent in real-world EVCS planning. Replacing raw annual profit with net
+ROI (annual profit / CAPEX) as the financial objective prevented Pareto
+front degeneracy and produced genuine solution diversity across the
+cost--coverage--profitability--service space. Embedding the M/M/$c$/K
+blocking probability constraint ($P_{\text{block}} \leq 10\%$) directly
+inside the evolutionary evaluation loop, rather than applying it
+post-hoc, proved critical: it forced both algorithms to provision
+adequate charger capacity at demand bottlenecks, yielding
+operationally stable deployment plans under peak load conditions.
+
+Formal performance evaluation using Hypervolume, Generational
+Distance, and Spread indicators showed that NSGA-II and MOPSO are
+\emph{complementary} rather than dominant on this binary
+combinatorial problem. MOPSO achieves a marginally higher final
+normalised hypervolume of $1.0434$ versus $0.9967$ for NSGA-II,
+and a substantially lower generational distance to the union
+reference front. NSGA-II, in turn, produces a more uniformly
+spread front (Spread $0.750$ vs.\ $0.792$) and a slightly lower
+median queue waiting time ($1.45$~min vs.\ $1.79$~min). Across the
+union of the two archives, capital expenditures range from
+\rupee39\,L to \rupee411\,L, coverage from 46.4\,\% to 100\,\%,
+and Net~ROI from 1.85 to 4.33. All Pareto-optimal layouts satisfy
+the $P_{\text{block}} \leq 10\,\%$ blocking constraint and the
+$u < 1$ stability bound across the three Time-of-Use periods,
+confirming that embedding the M/M/$c$/K constraint inside the
+evaluation loop successfully steers the search away from
+queue-infeasible deployments. The annual-profit distribution
+across the union archive spans \rupee1.2\,Cr to \rupee11.6\,Cr per
+year, confirming the commercial viability of public-private
+partnership EVCS deployment in Tier-2 Indian cities.
+
+Sensitivity analysis confirmed robustness to EV growth rate, electricity
+tariff, and charger technology variations, while scalability benchmarks
+demonstrated polynomial runtime scaling for both algorithms, validating
+the framework's applicability to larger metropolitan deployments.
+Overall, this study demonstrates that rigorous multi-objective evolutionary
+optimization, combined with realistic stochastic demand modelling and
+analytical queueing constraints, can produce actionable, evidence-based
+EVCS deployment strategies that simultaneously satisfy spatial, operational,
+and financial requirements.
+
+%---------------------------------------------------------
+\section{Future Work}
+
+Several extensions can further enhance the scope, accuracy, and practical
+utility of the proposed framework:
+
+\begin{itemize}
+    \item \textbf{Road-network routing:} The current framework computes
+          spatial coverage using Euclidean distances. Integrating
+          OpenStreetMap-based road-network routing via graph-search
+          APIs (e.g., OSRM) would produce topologically accurate
+          service radii, particularly in areas with low road density
+          or irregular urban form.
+
+    \item \textbf{Battery swapping station integration:} For the Indian
+          two-wheeler and three-wheeler market --- the dominant EV
+          segments --- expanding the optimization scope to include
+          Battery Swapping Stations alongside conventional plug-in
+          chargers would significantly improve the framework's
+          coverage of actual urban charging demand.
+    \item \textbf{Dynamic and real-time pricing:} The current ToU pricing
+          structure is applied exogenously based on time-of-day patterns.
+          Future work could incorporate real-time dynamic pricing
+          responsive to localized substation load levels and live
+          demand, potentially modelled through a Stackelberg game
+          between the network operator and EV users.
+
+    \item \textbf{Research publication:} Based on the results presented
+          in this thesis, a full research paper will be prepared and
+          submitted to a peer-reviewed journal or international
+          conference in smart cities, transportation electrification,
+          or evolutionary computation, documenting the four-objective
+          formulation, NSGA-II vs.\ MOPSO comparison, and Indore
+          case study findings.
+\end{itemize}
+
+\noindent
+These extensions can transform the current framework into a full-scale
+EV infrastructure intelligence platform, supporting sustainable,
+data-driven mobility planning for the rapidly electrifying urban
+ecosystems of Indian and other emerging-market cities.

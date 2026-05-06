@@ -1,0 +1,308 @@
+%==========================
+% Chapter 1 — Introduction
+%==========================
+
+\section{Introduction}
+
+The rapid proliferation of Electric Vehicles (EVs) in Indian cities has created an
+urgent need for scientifically planned public charging infrastructure. Inadequately
+placed stations lead to range anxiety, long queuing times, and underutilised
+investments --- outcomes that collectively erode user confidence and slow the
+broader EV adoption transition. The city of Indore, a major commercial hub of
+Madhya Pradesh, presents a challenging yet representative context for this problem,
+given its diverse ward-level demography, heterogeneous land-use patterns, and
+an active municipal push toward sustainable urban mobility under the Smart Cities
+Mission. As of early 2024, the city had fewer than 50 publicly accessible EV
+charging points --- a significant deficit relative to its projected EV fleet size
+under any realistic adoption scenario.
+
+Designing an optimized EVCS network is fundamentally a combinatorial
+multi-objective problem. A planner must simultaneously minimize capital
+expenditure, maximize spatial demand coverage, maximize financial return on
+investment, and minimize customer queue waiting times --- objectives that are
+inherently conflicting. No single solution dominates all others across every
+objective; instead, a Pareto-optimal set of trade-off solutions exists, which
+is the domain of multi-objective evolutionary algorithms (MOEAs). This thesis
+addresses this problem through a comprehensive four-objective optimization
+framework applied across the 85~administrative wards of Indore, comparing
+two state-of-the-art evolutionary algorithms --- Non-dominated Sorting Genetic
+Algorithm~II (NSGA-II) and Multi-Objective Particle Swarm Optimization
+(MOPSO) --- and validating results through analytical queueing models and
+Monte~Carlo stochastic demand simulation.
+
+\subsection{Overview of the Proposed Framework}
+\label{sec:intro_overview}
+
+The global transition toward sustainable transportation has led to a rapid
+increase in EV adoption. In India, and particularly in fast-growing cities
+such as Indore, this trend is reinforced by government incentives under the
+FAME~II scheme, environmental regulations, and rising public awareness.
+However, large-scale EV uptake is fundamentally constrained by the
+availability, accessibility, and reliability of the charging infrastructure.
+Poorly planned EVCS networks can lead to range anxiety, long waiting times,
+uneven spatial coverage, and overloading of the power grid.
+
+Designing an optimized EVCS network is a complex, multi-objective task.
+It involves simultaneously deciding:
+\begin{itemize}
+  \item which candidate locations should host charging stations;
+  \item how many chargers and what capacity should be installed at each
+        selected site;
+  \item how charging prices should be set across the network under
+        Time-of-Use (ToU) demand patterns;
+  \item how to ensure that grid constraints, blocking probability thresholds,
+        and user service quality requirements are simultaneously satisfied.
+\end{itemize}
+These decisions must be made under spatially heterogeneous demand,
+limited grid capacity, stochastic demand uncertainty, and evolving
+population and EV growth over a multi-year horizon.
+
+To address this challenge, the thesis proposes a unified framework with
+five tightly coupled components:
+\begin{enumerate}
+  \item \textbf{Four-objective problem formulation:} The EVCS placement
+        problem is formulated as a binary combinatorial optimisation problem
+        minimizing total capital expenditure~($f_1$) and mean queue waiting
+        time~($f_4$), while maximizing spatial demand coverage~($f_2$) and
+        net return on investment~($f_3$), over a pool of $30+$ heterogeneous
+        candidate venues across the 85~wards of Indore.
+
+  \item \textbf{NSGA-II and MOPSO comparative optimization:} Both
+        algorithms are independently applied to generate Pareto-optimal
+        station deployment plans. NSGA-II employs fast non-dominated sorting
+        with crowding distance selection, while MOPSO uses an external archive
+        with crowding-based leader selection. Algorithm quality is formally
+        compared using Hypervolume~(HV), Generational Distance~(GD), and
+        Spread performance indicators.
+
+  \item \textbf{Monte~Carlo stochastic demand modelling:} Demand is
+        projected using a logistic EV adoption curve anchored to CAGR-based
+        ward-level demographic forecasts, and further overlaid with
+        100-scenario Monte~Carlo simulation (noise fraction $v = 0.15$) to
+        ensure that selected station configurations are robust to stochastic
+        demand fluctuations.
+
+  \item \textbf{M/M/c/K queueing model with Time-of-Use pricing:}
+        Service quality at each station is captured by an M/M/c/K
+        finite-capacity queueing model with $K = c + 8$ physical waiting
+        bays, evaluated across three ToU demand periods --- Peak, Normal,
+        and Idle. A blocking probability constraint ($P_{\text{block}} > 10\%$)
+        is embedded directly into the evolutionary evaluation loop as a
+        hard penalty, ensuring that no selected station configuration
+        becomes queue-infeasible under peak demand.
+
+  \item \textbf{Sensitivity analysis and scalability benchmarking:}
+        The robustness of the optimal solutions is examined with respect
+        to EV growth rate, electricity tariff, installation cost factor,
+        and charger service rate. Scalability benchmarks confirm polynomial
+        runtime growth for both algorithms, validating applicability to
+        larger metropolitan deployments.
+\end{enumerate}
+
+Applied to Indore, the framework produces well-converged Pareto
+fronts spanning the full coverage range. Across the union of the
+NSGA-II and MOPSO archives, capital expenditures range from
+\rupee39\,L for the smallest viable layout to \rupee411\,L for full
+(100\,\%) ward coverage, with a marginal cost of approximately
+\rupee6--7\,L per percentage point of coverage. Mean queue waiting
+times across all Pareto-optimal layouts lie in the range
+0.13--5.6~minutes, comfortably within the 20-minute service-level
+target. Final hypervolume values are 0.9967 for NSGA-II and 1.0434
+for MOPSO, indicating that the two metaheuristics produce
+complementary fronts. The end-to-end pipeline (forecasting,
+queueing, optimisation, evaluation, and visualisation) completes in
+under four minutes of wall-clock time on a commodity laptop.
+
+\section{Background}
+\label{sec:intro_background}
+
+The expansion of EV infrastructure in Indian cities requires optimization
+techniques capable of handling multiple layers of complexity. Unlike
+conventional fuel stations, EVCSs interact directly with the power
+distribution network, making their planning and operation depend
+simultaneously on transportation patterns, demographic trends, grid
+constraints, and financial viability.
+
+\subsection{EV Adoption and Urban Charging Needs}
+
+India ranks as the world's third largest automobile market and has
+set an ambitious target of 30\% EV penetration by 2030 under the
+National Electric Mobility Mission Plan (NEMMP). As of 2024, India
+had registered over four million EVs, with two-wheelers
+constituting the dominant segment. For Indore specifically, the
+2011 census ward populations are projected forward at a compound
+annual growth rate of $r = 1.8\%$, consistent with the 2001--2011
+municipal trend, and the EV penetration fraction $\alpha(t)$ is
+modelled as a logistic curve with inflection at $t_0 = 2030$
+(aligned with the NEMMP target year) and steepness $a = 0.3$.
+Under this projection the city-wide EV fleet is expected to grow by
+roughly an order of magnitude between 2025 and 2035, putting clear
+upward pressure on the public charging backbone.
+
+Such growth patterns imply that EVCS networks cannot be designed solely
+for current demand. They must be robust to substantial increases in both
+the number of EVs and their spatial distribution, motivating the use of
+logistic adoption curves and multi-scenario stochastic demand models rather
+than static planning assumptions.
+
+\subsection{Limitations of Traditional Planning Approaches}
+
+Traditional EVCS planning approaches often rely on:
+\begin{itemize}
+  \item single-objective deterministic optimization (e.g., minimizing
+        average distance or total cost alone);
+  \item simplified queueing assumptions such as the Erlang-B loss model,
+        which ignores physical waiting bays and overestimates blocking;
+  \item static demand assumptions that do not account for long-term
+        EV adoption growth or stochastic variability;
+  \item uniform service radii that ignore urban density heterogeneity
+        and road-network accessibility differences.
+\end{itemize}
+These models are insufficient for city-scale planning where multiple
+conflicting objectives must be balanced simultaneously. In particular,
+they fail to capture trade-offs between cost, coverage, service quality,
+and financial sustainability --- or to enforce service-level constraints
+such as maximum blocking probability during peak demand periods.
+
+\subsection{NSGA-II, MOPSO, and Queueing Models}
+
+NSGA-II is an elitist multi-objective genetic algorithm that employs
+fast non-dominated sorting with $\mathcal{O}(MN^2)$ complexity and a
+crowding distance diversity mechanism. It has become the benchmark
+algorithm for multi-objective combinatorial optimisation, with
+well-understood convergence guarantees and binary crossover/mutation
+operators that map naturally onto station selection problems.
+
+MOPSO extends the Particle Swarm Optimisation paradigm to multiple
+objectives through an external archive of non-dominated solutions and
+crowding-based leader selection. For binary problems, continuous particle
+positions are binarised via a threshold for objective evaluation, while
+velocity updates operate in continuous space. MOPSO is known to converge
+faster than NSGA-II in early iterations, motivating its inclusion as a
+comparative benchmark.
+
+The M/M/c/K finite-capacity queueing model provides analytical
+steady-state expressions for queue length $L_q$, waiting time $W_q$,
+server utilisation $\rho$, and blocking probability $P_{\text{block}}$.
+The finite buffer assumption ($K = c + W$ waiting bays) is more realistic
+for urban charging stations than infinite-queue M/M/c models, and
+Time-of-Use segmentation of the arrival rate captures the bimodal daily
+demand pattern observed in field data.
+
+\section{Motivation}
+\label{sec:intro_motivation}
+
+The motivation for this research arises from both practical infrastructure
+requirements and methodological gaps in existing EVCS planning literature.
+
+\subsection*{1.~Addressing Infrastructure Deficits in Indian Cities}
+Most multi-objective EVCS placement studies have been conducted for
+Chinese or European cities using generic urban models. Studies specifically
+for Tier-1 Indian cities with real ward-level demographic data, India-specific
+policy parameters, and heterogeneous venue types are scarce. Indore, with
+its 85~wards, diverse land-use, and active smart-city programme, provides
+an empirically grounded and practically relevant case study.
+
+\subsection*{2.~Integrated Four-Objective Formulation}
+Existing studies typically address two or three objectives. The simultaneous
+optimisation of capital expenditure, spatial coverage, net ROI, and queue
+waiting time --- with net ROI defined as annual profit divided by CAPEX,
+rather than raw profit, to avoid degeneracy with the coverage objective ---
+has not been reported for Indian cities. This formulation creates genuine
+trade-off diversity in the Pareto search space.
+
+\subsection*{3.~Realistic Queueing with Blocking Constraints}
+Prior work either uses over-simplified Erlang-B loss models or
+time-averaged M/M/c queues. An integrated M/M/c/K model with ToU
+demand periods and a blocking probability hard constraint embedded
+inside the evolutionary evaluation loop represents a methodological
+advance that forces the optimizer to provision sufficient charger
+capacity at demand bottlenecks.
+
+\subsection*{4.~Stochastic Demand Robustness}
+Deterministic demand forecasts are insufficient for infrastructure
+planning over a 10-year horizon. Monte~Carlo simulation with 100
+demand scenarios ensures that selected station configurations remain
+feasible under the full range of plausible future demand trajectories,
+not merely under the mean forecast.
+
+\subsection*{5.~Reproducible, Extensible Planning Tool}
+The combination of open demographic data, a modular Python
+implementation, two well-documented evolutionary algorithms, and
+analytical queueing models yields a framework that is reproducible,
+extensible to other cities, and capable of accommodating future
+enhancements such as renewable integration, vehicle-to-grid (V2G)
+capabilities, and real-time dynamic pricing.
+
+\section{Thesis Objectives}
+\label{Chapter_1_Objectives}
+
+\noindent The specific objectives of this thesis are:
+
+\begin{enumerate}
+  \item To develop a data-driven multi-objective optimization model for
+        EVCS placement across Indore's 85~wards, integrating a
+        CAGR-based logistic EV adoption curve with Monte~Carlo
+        uncertainty quantification to forecast ward-level charging
+        demand, and formulating the station selection problem as a
+        four-objective binary optimisation incorporating total capital
+        expenditure, spatial demand coverage, net return on investment,
+        and mean queue waiting time.
+
+  \item To implement and comparatively evaluate NSGA-II and MOPSO on
+        the formulated problem, embedding an analytical M/M/c/K
+        finite-capacity queueing model with Time-of-Use demand periods
+        and a hard blocking probability constraint
+        ($P_{\text{block}} \leq 10\%$) directly within the evolutionary
+        evaluation loop, and quantifying algorithm quality using
+        Hypervolume~(HV), Generational Distance~(GD), and Spread
+        performance indicators.
+
+  \item To validate the robustness and scalability of the proposed
+        framework through sensitivity analysis with respect to EV
+        growth rate, electricity tariff, installation cost, and charger
+        service rate, and through scalability benchmarks confirming
+        polynomial runtime growth suitable for larger metropolitan
+        deployments.
+\end{enumerate}
+
+\section{Layout of the Thesis}
+\label{sec:intro_layout}
+
+This report is structured into the following chapters:
+
+\begin{itemize}
+  \item \textbf{Chapter 2: Literature Review} --- Reviews existing work on
+        EVCS placement, multi-objective evolutionary algorithms, M/M/$c$/K
+        queueing models, and stochastic demand forecasting methods. It
+        identifies five research gaps that motivate the proposed framework
+        and provides a structured comparative summary of twelve
+        representative studies.
+
+  \item \textbf{Chapter 3: Model Architecture} --- Describes the complete
+        architecture of the proposed framework, including the deterministic
+        baseline model, four-objective problem formulation, NSGA-II and
+        MOPSO optimization layers, M/M/$c$/K queueing evaluation layer with
+        Time-of-Use demand segmentation, and formal algorithm performance
+        evaluation using HV, GD, and Spread indicators.
+
+  \item \textbf{Chapter 4: Methodology} --- Details the structured
+        multi-stage pipeline covering dataset acquisition, spatial zoning,
+        ward-level logistic demand forecasting, Monte~Carlo stochastic
+        simulation, four-objective optimization using NSGA-II and MOPSO,
+        queueing-based operational evaluation, sensitivity analysis, and
+        scalability benchmarking.
+
+  \item \textbf{Chapter 5: Results and Analysis} --- Presents Pareto front
+        comparisons between NSGA-II and MOPSO, formal algorithm performance
+        indicators, optimal solution analysis, queue waiting time
+        distributions, HV convergence behaviour, sensitivity studies on
+        EV growth rate and tariff parameters, and scalability benchmarks.
+
+  \item \textbf{Chapter 6: Conclusion and Future Work} --- Summarizes the
+        main contributions, states deployment recommendations for Indore,
+        and outlines future extensions including road-network routing,
+        heterogeneous charger-type optimisation, battery swapping station
+        integration, and statistical significance testing.
+\end{itemize}
+% End of Chapter 1
