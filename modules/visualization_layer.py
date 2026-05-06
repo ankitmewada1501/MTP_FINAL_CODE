@@ -36,7 +36,18 @@ PLT_STYLE = {
     "legend.facecolor": "#ffffff",
     "legend.edgecolor": "#cccccc",
     "font.family": "DejaVu Sans",
+    # Larger defaults so labels remain readable at IEEE column width.
+    "font.size":         12,
+    "axes.titlesize":    14,
+    "axes.labelsize":    13,
+    "xtick.labelsize":   11,
+    "ytick.labelsize":   11,
+    "legend.fontsize":   11,
+    "figure.titlesize":  16,
+    "axes.linewidth":    1.0,
+    "lines.linewidth":   1.6,
 }
+plt.rcParams.update(PLT_STYLE)
 
 TYPE_COLORS = {
     "parking":      "#00d4ff",
@@ -55,7 +66,7 @@ TYPE_EMOJI = {
 
 def _b64(fig):
     buf = io.BytesIO()
-    fig.savefig(buf, format="png", bbox_inches="tight", dpi=130)
+    fig.savefig(buf, format="png", bbox_inches="tight", dpi=200)
     buf.seek(0)
     img = base64.b64encode(buf.read()).decode()
     plt.close(fig)
@@ -66,7 +77,7 @@ def plot_pareto_comparison(nsga2_obj, mopso_obj, out_path):
     # Bug #5: Standardize units — Lakhs for cost, % for coverage, matching individual plots
     with plt.rc_context(PLT_STYLE):
         fig, axes = plt.subplots(2, 2, figsize=(14, 10))
-        fig.suptitle("Pareto Front Comparison: NSGA-II vs MOPSO", fontsize=14,
+        fig.suptitle("Pareto Front Comparison: NSGA-II vs MOPSO", fontsize=17,
                      color="#111111", fontweight="bold", y=0.98)
 
         def _prep(obj):
@@ -90,10 +101,10 @@ def plot_pareto_comparison(nsga2_obj, mopso_obj, out_path):
                        edgecolors="#003040", label="NSGA-II", zorder=3)
             ax.scatter(mox, moy, c="#e04080", marker="s", s=25, alpha=0.75,
                        edgecolors="#400020", label="MOPSO", zorder=3)
-            ax.set_xlabel(xl, fontsize=8); ax.set_ylabel(yl, fontsize=8)
-            ax.legend(fontsize=7); ax.grid(True, alpha=0.3)
+            ax.set_xlabel(xl, fontsize=11); ax.set_ylabel(yl, fontsize=11)
+            ax.legend(fontsize=10); ax.grid(True, alpha=0.3)
         plt.tight_layout()
-        fig.savefig(out_path, bbox_inches="tight", dpi=130)
+        fig.savefig(out_path, bbox_inches="tight", dpi=200)
         plt.close(fig)
         print(f"[Viz] Pareto comparison saved: {out_path}")
 
@@ -104,7 +115,7 @@ def plot_queue_distribution(nsga2_obj, mopso_obj, out_path,
     with plt.rc_context(PLT_STYLE):
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 5))
         fig.suptitle("Queue Waiting Time Distribution (Mean Wq per Solution, M/M/c/K — no penalty)",
-                     fontsize=12, color="#111111", fontweight="bold")
+                     fontsize=15, color="#111111", fontweight="bold")
         n2_wq = nsga2_raw_wq if nsga2_raw_wq is not None else nsga2_obj[:, 3]
         mo_wq = mopso_raw_wq if mopso_raw_wq is not None else mopso_obj[:, 3]
         for ax, wq_arr, color, title in [
@@ -119,12 +130,12 @@ def plot_queue_distribution(nsga2_obj, mopso_obj, out_path,
             med = np.median(wq) if len(wq) > 0 else 0
             ax.axvline(x=med, color="#999999", linestyle="-.",
                        label=f"Median ({med:.1f} min)")
-            ax.set_title(title, color=color, fontsize=11, fontweight="bold")
-            ax.set_xlabel("Mean Waiting Time (minutes)", fontsize=9)
-            ax.set_ylabel("Density", fontsize=9)
-            ax.legend(fontsize=8); ax.grid(True, alpha=0.3)
+            ax.set_title(title, color=color, fontsize=14, fontweight="bold")
+            ax.set_xlabel("Mean Waiting Time (minutes)", fontsize=12)
+            ax.set_ylabel("Density", fontsize=12)
+            ax.legend(fontsize=11); ax.grid(True, alpha=0.3)
         plt.tight_layout()
-        fig.savefig(out_path, bbox_inches="tight", dpi=130)
+        fig.savefig(out_path, bbox_inches="tight", dpi=200)
         plt.close(fig)
         print(f"[Viz] Queue waiting distribution saved: {out_path}")
 
@@ -143,12 +154,12 @@ def plot_profit_uncertainty(nsga2_obj, mopso_obj, out_path):
             ax.hist(profits_mo[np.isfinite(profits_mo)], bins=25, color="#ff6b9d",
                     alpha=0.7, label="MOPSO", density=True)
         ax.set_title("Annual Profit Distribution Across Pareto Solutions",
-                     color="#111111", fontsize=11, fontweight="bold")
-        ax.set_xlabel("Annual Profit (₹ Crores)", fontsize=9)
-        ax.set_ylabel("Density", fontsize=9)
-        ax.legend(fontsize=9); ax.grid(True, alpha=0.3)
+                     color="#111111", fontsize=14, fontweight="bold")
+        ax.set_xlabel("Annual Profit (₹ Crores)", fontsize=12)
+        ax.set_ylabel("Density", fontsize=12)
+        ax.legend(fontsize=12); ax.grid(True, alpha=0.3)
         plt.tight_layout()
-        fig.savefig(out_path, bbox_inches="tight", dpi=130)
+        fig.savefig(out_path, bbox_inches="tight", dpi=200)
         plt.close(fig)
         print(f"[Viz] Profit distribution saved: {out_path}")
 
@@ -168,12 +179,12 @@ def plot_scalability(scalability_data, out_path):
         ax.errorbar(sizes, mo_t,  yerr=mo_e,  fmt="s-",
                     color="#777777", label="MOPSO (median ± std)",  linewidth=2, capsize=4)
         ax.set_title("Runtime Scalability (Median of 5 Runs)", color="#111111",
-                     fontsize=11, fontweight="bold")
-        ax.set_xlabel("Number of Candidate Locations", fontsize=9)
-        ax.set_ylabel("Runtime (seconds)", fontsize=9)
-        ax.legend(fontsize=9); ax.grid(True, alpha=0.3)
+                     fontsize=14, fontweight="bold")
+        ax.set_xlabel("Number of Candidate Locations", fontsize=12)
+        ax.set_ylabel("Runtime (seconds)", fontsize=12)
+        ax.legend(fontsize=12); ax.grid(True, alpha=0.3)
         plt.tight_layout()
-        fig.savefig(out_path, bbox_inches="tight", dpi=130)
+        fig.savefig(out_path, bbox_inches="tight", dpi=200)
         plt.close(fig)
         print(f"[Viz] Scalability plot saved: {out_path}")
 
@@ -191,7 +202,7 @@ def plot_nsga2_individual(nsga2_obj: np.ndarray, nsga2_rt: float, out_path: str)
     with plt.rc_context(PLT_STYLE):
         fig, axes = plt.subplots(2, 2, figsize=(14, 11), facecolor="#ffffff")
         fig.suptitle("NSGA-II Individual Pareto Front Results",
-                     color="#111111", fontsize=14, fontweight="bold", y=0.98)
+                     color="#111111", fontsize=17, fontweight="bold", y=0.98)
         obj = nsga2_obj.copy()
         cost =  obj[:, 0] / 1e5          # → Lakhs
         cov  = -obj[:, 1] * 100           # → % coverage
@@ -218,11 +229,11 @@ def plot_nsga2_individual(nsga2_obj: np.ndarray, nsga2_rt: float, out_path: str)
             ax.scatter(x[best_cost_idx], y[best_cost_idx], s=120, color="#e04040",
                        marker="D", edgecolors="#200000", zorder=5,
                        label=f"Min cost (₹{cost[best_cost_idx]:.0f}L)")
-            ax.set_xlabel(xl, fontsize=9, color="#333333")
-            ax.set_ylabel(yl, fontsize=9, color="#333333")
-            ax.tick_params(colors="#111111", labelsize=8)
+            ax.set_xlabel(xl, fontsize=12, color="#333333")
+            ax.set_ylabel(yl, fontsize=12, color="#333333")
+            ax.tick_params(colors="#111111", labelsize=11)
             ax.grid(True, alpha=0.5)
-            ax.legend(fontsize=7, loc="best")
+            ax.legend(fontsize=10, loc="best")
 
         fig.text(0.5, 0.01,
                  f"NSGA-II  |  {len(nsga2_obj)} Pareto solutions  |  "
@@ -230,9 +241,9 @@ def plot_nsga2_individual(nsga2_obj: np.ndarray, nsga2_rt: float, out_path: str)
                  f"Coverage: {cov.min():.1f}%–{cov.max():.1f}%  |  "
                  f"ROI: {roi.min():.2f}–{roi.max():.2f}  |  "
                  f"Cost: ₹{cost.min():.0f}L–₹{cost.max():.0f}L",
-                 ha="center", color="#333333", fontsize=8)
+                 ha="center", color="#333333", fontsize=11)
         plt.tight_layout(rect=[0, 0.03, 1, 0.97])
-        fig.savefig(out_path, bbox_inches="tight", dpi=130)
+        fig.savefig(out_path, bbox_inches="tight", dpi=200)
         plt.close(fig)
         print(f"[Viz] NSGA-II individual Pareto saved: {out_path}")
 
@@ -242,7 +253,7 @@ def plot_mopso_individual(mopso_obj: np.ndarray, mopso_rt: float, out_path: str)
     with plt.rc_context(PLT_STYLE):
         fig, axes = plt.subplots(2, 2, figsize=(14, 11), facecolor="#ffffff")
         fig.suptitle("MOPSO Individual Pareto Front Results",
-                     color="#111111", fontsize=14, fontweight="bold", y=0.98)
+                     color="#111111", fontsize=17, fontweight="bold", y=0.98)
         obj = mopso_obj.copy()
         cost =  obj[:, 0] / 1e5          # → Lakhs
         cov  = -obj[:, 1] * 100           # → % coverage
@@ -267,11 +278,11 @@ def plot_mopso_individual(mopso_obj: np.ndarray, mopso_rt: float, out_path: str)
             ax.scatter(x[best_cost_idx], y[best_cost_idx], s=120, color="#00c070",
                        marker="D", edgecolors="#003020", zorder=5,
                        label=f"Min cost (₹{cost[best_cost_idx]:.0f}L)")
-            ax.set_xlabel(xl, fontsize=9, color="#333333")
-            ax.set_ylabel(yl, fontsize=9, color="#333333")
-            ax.tick_params(colors="#111111", labelsize=8)
+            ax.set_xlabel(xl, fontsize=12, color="#333333")
+            ax.set_ylabel(yl, fontsize=12, color="#333333")
+            ax.tick_params(colors="#111111", labelsize=11)
             ax.grid(True, alpha=0.5)
-            ax.legend(fontsize=7, loc="best")
+            ax.legend(fontsize=10, loc="best")
 
         fig.text(0.5, 0.01,
                  f"MOPSO  |  {len(mopso_obj)} Pareto solutions  |  "
@@ -279,9 +290,9 @@ def plot_mopso_individual(mopso_obj: np.ndarray, mopso_rt: float, out_path: str)
                  f"Coverage: {cov.min():.1f}%–{cov.max():.1f}%  |  "
                  f"ROI: {roi.min():.2f}–{roi.max():.2f}  |  "
                  f"Cost: ₹{cost.min():.0f}L–₹{cost.max():.0f}L",
-                 ha="center", color="#333333", fontsize=8)
+                 ha="center", color="#333333", fontsize=11)
         plt.tight_layout(rect=[0, 0.03, 1, 0.97])
-        fig.savefig(out_path, bbox_inches="tight", dpi=130)
+        fig.savefig(out_path, bbox_inches="tight", dpi=200)
         plt.close(fig)
         print(f"[Viz] MOPSO individual Pareto saved: {out_path}")
 
@@ -308,23 +319,23 @@ def plot_nsga2_convergence(history: list, out_path: str):
         ax.axvline(x=plateau_start, color="#222222", linestyle=":", alpha=0.8, linewidth=1.5,
                    label=f"HV plateau: gen ~{plateau_start}")
         ax.set_title("NSGA-II Convergence — Hypervolume (HV) per Generation",
-                     color="#111111", fontsize=13, fontweight="bold", pad=12)
-        ax.set_xlabel("Generation", fontsize=10, color="#333333")
-        ax.set_ylabel("Hypervolume (f₁ vs f₂ space)", fontsize=10, color="#333333")
-        ax.legend(fontsize=8, loc="lower right")
+                     color="#111111", fontsize=16, fontweight="bold", pad=12)
+        ax.set_xlabel("Generation", fontsize=13, color="#333333")
+        ax.set_ylabel("Hypervolume (f₁ vs f₂ space)", fontsize=13, color="#333333")
+        ax.legend(fontsize=11, loc="lower right")
         ax.grid(True, alpha=0.7)
         # Annotate key values
         ax.annotate(f"HV₀ = {history[0]:.3e}",
                     xy=(1, hv_mono[0]), xytext=(len(gens)//8, hv_mono[0]*0.7),
-                    color="#555555", fontsize=8,
+                    color="#555555", fontsize=11,
                     arrowprops=dict(arrowstyle="->", color="#555555"))
         ax.annotate(f"HV_final = {hv_mono[-1]:.3e}",
                     xy=(len(gens), hv_mono[-1]),
                     xytext=(len(gens)*0.7, hv_mono[-1]*0.85),
-                    color="#000000", fontsize=8,
+                    color="#000000", fontsize=11,
                     arrowprops=dict(arrowstyle="->", color="#000000"))
         plt.tight_layout()
-        fig.savefig(out_path, bbox_inches="tight", dpi=130)
+        fig.savefig(out_path, bbox_inches="tight", dpi=200)
         plt.close(fig)
         print(f"[Viz] NSGA-II HV convergence plot saved: {out_path}")
 
@@ -348,22 +359,22 @@ def plot_mopso_convergence(history: list, out_path: str):
         ax.axvline(x=plateau_start, color="#111111", linestyle=":", alpha=0.8, linewidth=1.5,
                    label=f"HV plateau: iter ~{plateau_start}")
         ax.set_title("MOPSO Convergence — Hypervolume (HV) per Iteration",
-                     color="#111111", fontsize=13, fontweight="bold", pad=12)
-        ax.set_xlabel("Iteration", fontsize=10, color="#333333")
-        ax.set_ylabel("Hypervolume (f₁ vs f₂ space)", fontsize=10, color="#333333")
-        ax.legend(fontsize=8, loc="lower right")
+                     color="#111111", fontsize=16, fontweight="bold", pad=12)
+        ax.set_xlabel("Iteration", fontsize=13, color="#333333")
+        ax.set_ylabel("Hypervolume (f₁ vs f₂ space)", fontsize=13, color="#333333")
+        ax.legend(fontsize=11, loc="lower right")
         ax.grid(True, alpha=0.7)
         ax.annotate(f"HV₀ = {history[0]:.3e}",
                     xy=(1, hv_mono[0]), xytext=(len(iters)//8, hv_mono[0]*0.7),
-                    color="#555555", fontsize=8,
+                    color="#555555", fontsize=11,
                     arrowprops=dict(arrowstyle="->", color="#555555"))
         ax.annotate(f"HV_final = {hv_mono[-1]:.3e}",
                     xy=(len(iters), hv_mono[-1]),
                     xytext=(len(iters)*0.7, hv_mono[-1]*0.85),
-                    color="#555555", fontsize=8,
+                    color="#555555", fontsize=11,
                     arrowprops=dict(arrowstyle="->", color="#555555"))
         plt.tight_layout()
-        fig.savefig(out_path, bbox_inches="tight", dpi=130)
+        fig.savefig(out_path, bbox_inches="tight", dpi=200)
         plt.close(fig)
         print(f"[Viz] MOPSO HV convergence plot saved: {out_path}")
 
@@ -1884,7 +1895,7 @@ def plot_mopso_convergence_rate(history: list, out_path: str):
     with plt.rc_context(PLT_STYLE):
         fig, axes = plt.subplots(1, 2, figsize=(14, 5), facecolor="#ffffff")
         fig.suptitle("MOPSO Convergence Rate Analysis (Fix 6)",
-                     color="#111111", fontsize=13, fontweight="bold")
+                     color="#111111", fontsize=16, fontweight="bold")
         hv_mono = np.maximum.accumulate(history)
 
         # Left: Cumulative HV
@@ -1893,11 +1904,11 @@ def plot_mopso_convergence_rate(history: list, out_path: str):
         iters = list(range(1, len(hv_mono)+1))
         ax1.plot(iters, hv_mono, color="#555555", lw=2.5, zorder=3, label="Cumul. HV", linestyle="-")
         ax1.fill_between(iters, 0, hv_mono, alpha=0.12, color="#555555")
-        ax1.set_xlabel("Iteration", color="#333333", fontsize=9)
-        ax1.set_ylabel("Hypervolume", color="#333333", fontsize=9)
-        ax1.set_title("Cumulative HV Growth", color="#111111", fontsize=11)
+        ax1.set_xlabel("Iteration", color="#333333", fontsize=12)
+        ax1.set_ylabel("Hypervolume", color="#333333", fontsize=12)
+        ax1.set_title("Cumulative HV Growth", color="#111111", fontsize=14)
         ax1.grid(True, alpha=0.5)
-        ax1.legend(fontsize=8)
+        ax1.legend(fontsize=11)
 
         # Right: HV GAIN per 50-iter window
         ax2 = axes[1]
@@ -1912,9 +1923,9 @@ def plot_mopso_convergence_rate(history: list, out_path: str):
         colors = ["#777777" if g > np.mean(gains) * 0.1 else "#333333" for g in gains]
         bars = ax2.bar(range(len(gains)), gains, color=colors, alpha=0.85, edgecolor="black")
         ax2.set_xticks(range(len(labels)))
-        ax2.set_xticklabels(labels, rotation=45, ha="right", fontsize=7, color="#111111")
-        ax2.set_ylabel("HV Gain per 50 Iters", color="#333333", fontsize=9)
-        ax2.set_title("HV Improvement Rate — Convergence Evidence", color="#111111", fontsize=11)
+        ax2.set_xticklabels(labels, rotation=45, ha="right", fontsize=10, color="#111111")
+        ax2.set_ylabel("HV Gain per 50 Iters", color="#333333", fontsize=12)
+        ax2.set_title("HV Improvement Rate — Convergence Evidence", color="#111111", fontsize=14)
         ax2.grid(True, axis="y", alpha=0.5)
         # Annotate the plateau region
         if len(gains) > 4:
@@ -1922,14 +1933,14 @@ def plot_mopso_convergence_rate(history: list, out_path: str):
             avg_last = np.mean(last3)
             ax2.axhline(avg_last, color="#000000", linestyle="--", alpha=0.6, lw=1.2,
                         label=f"Final avg gain: {avg_last:.4f}")
-            ax2.legend(fontsize=8)
+            ax2.legend(fontsize=11)
         # Verdict
         verdict = ("✓ CONVERGED" if len(gains) > 2 and max(gains[-2:]) < 0.005
                    else "~NEAR PLATEAU")
-        ax2.set_xlabel(f"50-iter Window | Verdict: {verdict}", color="#333333", fontsize=9)
+        ax2.set_xlabel(f"50-iter Window | Verdict: {verdict}", color="#333333", fontsize=12)
 
         plt.tight_layout()
-        fig.savefig(out_path, bbox_inches="tight", dpi=130)
+        fig.savefig(out_path, bbox_inches="tight", dpi=200)
         plt.close(fig)
         print(f"[Viz] MOPSO convergence rate plot saved: {out_path}")
 
