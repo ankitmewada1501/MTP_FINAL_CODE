@@ -57,22 +57,22 @@
        Time-of-Use Pricing in Smart Cities%
        \thanks{All source code, datasets, and reproduction
        scripts for this work are publicly available at
-       \url{https://github.com/ankitmewada1501/ev_optimization}.}}
+       \url{https://github.com/ankitmewada1501/MTP_FINAL_CODE}.}}
 
 \author{
-\IEEEauthorblockN{Ankit Mewada\IEEEauthorrefmark{1}}
+\IEEEauthorblockN{Ankit Mewada}
 \IEEEauthorblockA{\textit{Dept.\ of IT, ABV-IIITM} \\
 Roll No.\ 2021IMT-013\\
 Gwalior, India \\
-ankit.mewada@iiitm.ac.in}
+ankitmewada0106@gmail.com}
 \and
-\IEEEauthorblockN{Aditya Trivedi\IEEEauthorrefmark{2}}
-\IEEEauthorblockA{\textit{Dept.\ of ICT, ABV-IIITM} \\
+\IEEEauthorblockN{Aditya Trivedi}
+\IEEEauthorblockA{\textit{Dept.\ of IT, ABV-IIITM} \\
 Gwalior, India \\
 atrivedi@iiitm.ac.in}
 \and
-\IEEEauthorblockN{Saumya Bhadauria\IEEEauthorrefmark{3}}
-\IEEEauthorblockA{\textit{Dept.\ of CSE/IT, ABV-IIITM} \\
+\IEEEauthorblockN{Saumya Bhadauria}
+\IEEEauthorblockA{\textit{Dept.\ of CSE, ABV-IIITM} \\
 Gwalior, India \\
 saumya@iiitm.ac.in}
 }
@@ -104,7 +104,7 @@ converge to high-quality Pareto fronts, with MOPSO marginally
 ahead on hypervolume and NSGA-II on spread, and a median wait time
 of $\approx 1.5$\,min against a $20$\,min service-level target. Radius-based
 coverage and independent per-station Monte Carlo noise produce Pareto fronts
-that span $46\%\!-\!100\%$ coverage, giving the decision maker a rich menu
+that span $49\%\!-\!100\%$ coverage, giving the decision maker a rich menu
 of budget-versus-service trade-offs. The end-to-end pipeline runs in under
 four minutes on a commodity laptop.
 \end{abstract}
@@ -172,19 +172,16 @@ fail to expose the marginal cost of the last few percentage points
 of coverage --- precisely the information that a budget-constrained
 planner needs.
 
-The contribution of our work is, therefore, an open, reproducible
-framework that:
+The contributions are as follows 
 \begin{itemize}
 \item \textbf{Jointly} optimises four objectives (capex, radius-based
       coverage, net ROI, weighted mean wait time) using both NSGA-II and
-      MOPSO;
-\item Models demand stochasticity through independent per-station
-      Monte Carlo noise and a logistic EV adoption curve;
+      MOPSO.
+\item To capture uncertainty, the models employ independent per-station Monte Carlo noise alongside a logistic EV adoption curve.
 \item Embeds a finite-capacity $M/M/c/K$ queue with time-of-use
-      (peak/normal/idle) demand multipliers and pricing;
-\item Enforces a per-zone grid-capacity constraint via a soft penalty;
-\item Validates on 85 wards of Indore with 30 real candidate
-      venues dynamically expanded to 118 high-demand slots.
+      (peak/normal/idle) demand multipliers and pricing.
+\item Enforces a per-zone grid-capacity constraint via a soft penalty.
+\
 \end{itemize}
 
 The remainder of the paper is organised as follows.
@@ -491,7 +488,7 @@ capex). $f_{4}$ adds a 50-minute penalty per station whose blocking
 probability exceeds 10\% and 20 minutes per unstable
 ($u\ge1$) station.
 
-\section{Methodology}
+\section{Proposed framework}
 \label{sec:method}
 
 \subsection{System architecture}
@@ -830,16 +827,17 @@ confirming convergence in the Pareto-dominance sense.
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=.95\linewidth]{nsga2_conv.png}
+  \includegraphics[width=.95\linewidth]{NSGA2-conv.png}
   \caption{NSGA-II hypervolume versus generation. The dashed line marks
            the generation of fastest HV gain; the dotted line marks the
            plateau.}
   \label{fig:conv_nsga2}
 \end{figure}
 
+
 \begin{figure}[t]
   \centering
-  \includegraphics[width=.95\linewidth]{mopso_conv.png}
+  \includegraphics[width=.95\linewidth]{MOPSO_CONV.png}
   \caption{MOPSO hypervolume versus iteration.}
   \label{fig:conv_mopso}
 \end{figure}
@@ -848,8 +846,8 @@ confirming convergence in the Pareto-dominance sense.
 \label{subsec:pareto}
 Figure~\ref{fig:pareto} overlays the two algorithms' four-objective
 projections. In the cost--coverage panel both produce a sharp
-frontier from $\sim\!\text{\rupee}40$\,L/46\% coverage up to
-$\sim\!\text{\rupee}410$\,L/100\% coverage; the average marginal
+frontier from $\sim\!\text{\rupee}39$\,L/49\% coverage up to
+$\sim\!\text{\rupee}400$\,L/100\% coverage; the average marginal
 cost of coverage is approximately $\text{\rupee}6$--$7$\,L per
 percentage point. Exposing this trade-off explicitly is precisely
 the kind of information that a single weighted-sum objective
@@ -859,17 +857,22 @@ Pareto surface is well explored. The MOPSO archive, plotted alone
 in Fig.~\ref{fig:mopso_pareto}, gives a clearer view of the
 non-dominated set produced by the swarm-based search.
 
+
+
+
 \begin{figure}[t]
   \centering
-  \includegraphics[width=.98\linewidth]{pareto_comp.png}
+  \includegraphics[width=.98\linewidth]{PARETO_COMP.png}
   \caption{Pareto front overlay (NSGA-II blue circles, MOPSO pink
            squares). Four objective projections shown simultaneously.}
   \label{fig:pareto}
 \end{figure}
 
+
+
 \begin{figure}[t]
   \centering
-  \includegraphics[width=.98\linewidth]{mopso.png}
+  \includegraphics[width=.98\linewidth]{MOPSO-ROI.png}
   \caption{MOPSO Pareto archive on the cost--coverage and
            ROI--wait projections, showing a well-spread non-dominated
            set after 500 iterations.}
@@ -880,7 +883,7 @@ non-dominated set produced by the swarm-based search.
 \label{subsec:queue_perf}
 After removing the penalty component that inflates $f_{4}$ during
 search, the real mean wait time per Pareto solution
-(Fig.~\ref{fig:wq}) is distributed in $[0.13, 5.6]$\,min, well
+(Fig.~\ref{fig:wq}) is distributed in $[0.18, 6.3]$\,min, well
 inside the 20-min service-level target. The lower tail
 ($<\!1$\,min) corresponds to high-budget layouts with many
 chargers and abundant spare capacity even at peak; the upper tail
@@ -891,11 +894,13 @@ $u\!\ge\!1$ stability bound or the $P_{K}\!>\!10\%$ blocking
 bound, which would otherwise trigger the 50- and 20-minute
 penalties in $f_{4}$ and push the layout off the front.
 
+
+
 \begin{figure}[t]
   \centering
-  \includegraphics[width=.98\linewidth]{queuening_time.png}
+  \includegraphics[width=.98\linewidth]{queue-waiting.png}
   \caption{Real (penalty-free) mean queue wait per Pareto solution.
-           Median: 1.5\,min (NSGA-II), 1.8\,min (MOPSO).}
+           Median: 1.2\,min (NSGA-II), 2.0\,min (MOPSO).}
   \label{fig:wq}
 \end{figure}
 
@@ -903,16 +908,19 @@ penalties in $f_{4}$ and push the layout off the front.
 \label{subsec:financial}
 Figure~\ref{fig:profit} shows the annual profit
 (ROI~$\times$~capex) distribution across Pareto solutions. Profits
-span $\text{\rupee}1.2$\,Cr$\,$--$\,\text{\rupee}11.6$\,Cr/yr, with
+span $\text{\rupee}1.3$\,Cr$\,$--$\,\text{\rupee}11.7$\,Cr/yr, with
 NSGA-II reaching the upper end of the tail. The high-ROI tail of
 the distribution corresponds to small layouts of a few
 high-utilisation stations in the central zone, while the
 lower-ROI region corresponds to larger near-100\%-coverage layouts
 that include low-utilisation outer-zone stations.
 
+
+
+
 \begin{figure}[t]
   \centering
-  \includegraphics[width=.98\linewidth]{uncertainty.png}
+  \includegraphics[width=.98\linewidth]{Annual_profit.png}
   \caption{Annual-profit distribution across Pareto solutions.}
   \label{fig:profit}
 \end{figure}
@@ -939,8 +947,8 @@ individually.
     \toprule
     Algorithm & HV $\uparrow$ & GD $\downarrow$ & Spread $\downarrow$ \\
     \midrule
-    NSGA-II   & $1.00\!\times\!10^{9}$  & $9.04\!\times\!10^{4}$ & 0.75 \\
-    MOPSO     & $1.15\!\times\!10^{9}$  & $9.00\!\times\!10^{3}$ & 0.79 \\
+    NSGA-II   & $1.00\!\times\!10^{9}$  & $3.36\!\times\!10^{4}$ & 0.65 \\
+    MOPSO     & $1.16\!\times\!10^{9}$  & $5.20\!\times\!10^{3}$ & 0.87 \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -1044,7 +1052,7 @@ list, the 85-ward CSV, all configuration files, and the scripts
 required to regenerate every figure and table in this paper are
 released under an open-source licence at
 \begin{center}
-\url{https://github.com/ankitmewada1501/ev_optimization}.
+\url{https://github.com/ankitmewada1501/MTP_FINAL_CODE}.
 \end{center}
 The repository ships a top-level \texttt{main.py} entry point, a
 \texttt{config.yaml} that exposes every hyperparameter mentioned in
