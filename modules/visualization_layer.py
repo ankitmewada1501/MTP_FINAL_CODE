@@ -44,6 +44,11 @@ PLT_STYLE = {
     "ytick.labelsize":   17,
     "legend.fontsize":   17,
     "figure.titlesize":  22,
+    # Make axis labels, tick labels, titles bold throughout.
+    "font.weight":       "bold",
+    "axes.titleweight":  "bold",
+    "axes.labelweight":  "bold",
+    "figure.titleweight":"bold",
     "axes.linewidth":    1.0,
     "lines.linewidth":   1.6,
 }
